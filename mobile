@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta name="msapplication-tap-highlight" content="no" />
+    <title id='Description'>DropDownList with Checkboxes</title>
+
+    <link rel="stylesheet" href="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/styles/jqx.windowsphone.css" type="text/css" />
+    <link rel="stylesheet" href="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/styles/jqx.blackberry.css" type="text/css" />
+    <link rel="stylesheet" href="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/styles/jqx.android.css" type="text/css" />
+    <link rel="stylesheet" href="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/styles/jqx.mobile.css" type="text/css" />
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+      function prepareSimulator(id, structure) {
+       
+        var hasFullScreenParam = window.location.toString().indexOf('fullscreen') >= 0;
+        if (!touchDevice) {
+          var theme = "mobile";
+          var device = "mobile";
+          var hasParam = window.location.toString().indexOf('?');
+          if (hasParam != -1) {
+            var start = window.location.toString().indexOf('(');
+            var end = window.location.toString().indexOf(')');
+            var device = window.location.toString().substring(start + 1, end);
+            if (device === "") device = "mobile";
+            var className = "device-" + device;
+
+            if (device !== "android" && device !== "blackberry" && device !== "win8" && device !== "mobile") {
+              device = "mobile";
+              var className = "device-" + device;
+            }
+
+            if (device == "android") theme = "android";
+            if (device == "blackberry") theme = "blackberry";
+            if (device == "win8") theme = "windowsphone";
+          }
+        }
+
+        if (touchDevice || hasFullScreenParam) {
+          $("#container").removeClass();
+          $("#container").addClass('mobile-container');
+          if (id === "window" && !hasFullScreenParam) {
+            $("#container").css('min-height', 700);
+          }
+
+          var toolbar = $('<div id="demoToolbar" style="border-bottom: 1px solid #555; z-index: 9999999999; position: absolute; top:0; width: 100%; height: 40px;"><div id="demoToolbarButton" style="float: left; margin: 5px; margin-left: 10px; padding: 3px 10px;"><div style="float: left;"></div><span style="float: left;">Back</span><div style="clear:both;"></div></div></div>');
+          if (!hasFullScreenParam) {
+            $("#container").prepend(toolbar);
+          } else {
+            $("#container").css('padding-top', '0px');
+            $("#container").css('padding-bottom', '0px');
+            if (theme == "windowsphone") {
+              $(document.body).css('background', "#000");
+              $(document.body).css('color', "#fff");
+            } else if (theme == "android") {
+              $(document.body).css('background', "#000");
+              $(document.body).css('color', "#fff");
+            } else if (theme === "mobile") {
+              $(document.body).css('background', "fff");
+              $(document.body).css('color', "#000");
+            }
+          }
+
+          var html = $("#container").parent().html();
+          $("#demoContainer").remove();
+          $(document.body).html(html);
+          var match = null;
+          var version = "";
+          var userAgent = navigator.userAgent;
+          var os = "Other";
+          var osTypes = {
+            ios: {
+              name: 'iOS',
+              regex: new RegExp('(?:' + 'i(?:Pad|Phone|Pod)(?:.*)CPU(?: iPhone)? OS ' + ')([^\\s;]+)')
+            },
+            android: {
+              name: 'Android',
+              regex: new RegExp('(?:' + '(Android |HTC_|Silk/)' + ')([^\\s;]+)')
+            },
+            webos: {
+              name: 'webOS',
+              regex: new RegExp('(?:' + '(?:webOS|hpwOS)\/' + ')([^\\s;]+)')
+            },
+            blackberry: {
+              name: 'BlackBerry',
+              regex: new RegExp('(?:' + 'BlackBerry(?:.*)Version\/' + ')([^\\s;]+)')
+            },
+            bb10: {
+              name: 'BlackBerry',
+              regex: new RegExp('(?:' + 'BB10(?:.*))([^\\s;]+)')
+            },
+            rimTablet: {
+              name: 'RIMTablet',
+              regex: new RegExp('(?:' + 'RIM Tablet OS ' + ')([^\\s;]+)')
+            },
+            chrome: {
+              name: 'Chrome OS',
+              regex: new RegExp('CrOS')
+            },
+            mac: {
+              name: 'MacOS',
+              regex: new RegExp('mac')
+            },
+            win: {
+              name: 'Windows',
+              regex: new RegExp('win')
+            },
+            linux: {
+              name: 'Linux',
+              regex: new RegExp('linux')
+            },
+            bada: {
+              name: 'Bada',
+              regex: new RegExp('(?:' + 'Bada\/' + ')([^\\s;]+)')
+            },
+            other: {
+              name: 'Other'
+            }
+          }
+
+          $.each(osTypes, function(index, value) {
+            match = userAgent.match(this.regex) || userAgent.toLowerCase().match(this.regex);
+
+            if (match) {
+              if (!this.name.match(/Windows|Linux|MaxOS/)) {
+                if (match[1] && (match[1] == "HTC_" || match[1] == "Silk/")) {
+                  version = "2.3";
+                } else {
+                  version = match[match.length - 1];
+                }
+              }
+
+              os = {
+                name: this.name,
+                version: version,
+                platform: navigator.platform
+              };
+              return false;
+            }
+          });
+          if (!hasFullScreenParam) {
+            var theme = "windowsphone";
+            if (os.name === "Android" || os.name === "Bada" || os.name === "Chrome OS" || os.name === "webOS") {
+              theme = "android";
+            }
+            if (os.name === "iOS" || os.name === "MacOS") {
+              theme = "mobile";
+            }
+            if (os.name === "Windows") {
+              theme = "windowsphone";
+            }
+            if (os.name === "BlackBerry" || os.name === "RIMTablet") {
+              theme = "blackberry";
+            }
+
+
+            $("#demoToolbar").addClass('jqx-widget-header jqx-widget-header-' + theme);
+            $("#demoToolbar").addClass('jqx-listmenu-header jqx-listmenu-header-' + theme);
+            $("#demoToolbar").css('padding', '0px');
+            $("#demoToolbar").css('padding-top', '5px');
+
+            if (theme == "windowsphone") {
+              $("#demoToolbar").css('background', "#2A2A2B");
+              $("#demoToolbar").css('border-bottom-color', "#000");
+              $(document.body).css('background', "#000");
+              $(document.body).css('color', "#fff");
+            } else if (theme == "android") {
+              $("#demoToolbar").css('background', "#000");
+              $("#demoToolbar").css('border-bottom-color', "#333");
+              $(document.body).css('background', "#000");
+              $(document.body).css('color', "#fff");
+            } else if (theme === "mobile") {
+              $("#demoToolbar").css('background', "#f8f8f8");
+              $("#demoToolbar").css('border-bottom-color', "#b2b2b2");
+              $(document.body).css('background', "fff");
+              $(document.body).css('color', "#000");
+            }
+
+            $("#demoToolbarButton").jqxButton({
+              theme: theme
+            });
+            $("#demoToolbarButton").css('border-radius', '10px');
+            $("#demoToolbarButton").find('div:first').addClass('jqx-listmenu-backbutton-arrow' + ' jqx-listmenu-backbutton-arrow-' + theme);
+
+            $("#demoToolbarButton").click(function() {
+              window.open('../index.htm', '_self');
+            });
+          }
+          $(document.body).css('visibility', 'visible');
+          return theme;
+        }
+        if (hasParam != -1) {
+          switch (id) {
+            case "grid":
+            case "scheduler":
+            case "kanban":
+            case "layout":
+            case "dockinglayout":
+            case "gauge":
+            case "chart":
+            case "menu":
+            case "treemap":
+            case "tabs":
+            case "editor":
+            case "panel":
+            case "window":
+            case "photoGallery":
+            case "splitter":
+            case "popover":
+            case "draw":
+            case "ribbon":
+            case "rangeSelector":
+              className += "-tablet";
+              break;
+          }
+          if ($("#demoContainer").length > 0) {
+            $("#demoContainer")[0].className = className;
+            $("#container")[0].className = className + "-container";
+          }
+        }
+        $(document.body).css('visibility', 'visible');
+        return theme;
+      }
+
+      function initSimulator(id, settings) {
+        if ($.jqx.mobile.isTouchDevice()) {
+          if (id == "scheduler") {
+            $("#scheduler").jqxScheduler(settings);
+          }
+          return;
+        }
+
+        switch (id) {
+          case "calendar":
+            if ($("#fromCalendar").length > 0) {
+              $("#fromCalendar").jqxCalendar({
+                enableHover: false,
+                keyboardNavigation: false
+              });
+              $("#toCalendar").jqxCalendar({
+                enableHover: false,
+                keyboardNavigation: false
+              });
+            }
+            break;
+          case "listbox":
+            $("#listbox").jqxListBox({
+              touchMode: true,
+              keyboardNavigation: false,
+              enableMouseWheel: false
+            });
+            break;
+          case "splitter":
+            $("#splitter").jqxSplitter({
+              touchMode: true
+            });
+            if ($("#listbox").length > 0) {
+              $("#listbox").jqxListBox({
+                touchMode: true,
+                keyboardNavigation: false,
+                enableMouseWheel: false
+              });
+              $("#ContentPanel").jqxPanel({
+                touchMode: true
+              });
+            } else {
+              $('#rightSplitter').jqxSplitter({
+                touchMode: true
+              });
+            }
+            break;
+          case "menu":
+            $("#menu").jqxMenu({
+              enableHover: false,
+              clickToOpen: true,
+              touchMode: true
+            });
+            break;
+          case "tree":
+            $("#tree").jqxTree({
+              touchMode: true,
+              keyboardNavigation: false
+            });
+            break;
+          case "dropdownlist":
+            $("#dropdownlist").jqxDropDownList('listBox').host.jqxListBox({
+              touchMode: true,
+              keyboardNavigation: false
+            });
+            break;
+          case "adapter":
+            $("#jqxDropDownList").jqxDropDownList('listBox').host.jqxListBox({
+              touchMode: true,
+              keyboardNavigation: false
+            });
+            break;
+          case "combobox":
+            $("#combobox").jqxComboBox({
+              touchMode: true
+            });
+            break;
+          case "dropDownButton":
+            $("#tree").jqxTree({
+              touchMode: true,
+              keyboardNavigation: false
+            });
+            break;
+          case "numberInput":
+            $("#numericInput").jqxNumberInput({
+              touchMode: true
+            });
+            $("#percentageInput").jqxNumberInput({
+              touchMode: true
+            });
+            $("#currencyInput").jqxNumberInput({
+              touchMode: true
+            });
+            break;
+          case "tabs":
+            $("#tabs").jqxTabs({
+              touchMode: true,
+              keyboardNavigation: false
+            });
+            $("#jqxGrid").jqxGrid({
+              touchmode: true,
+              keyboardnavigation: false,
+              enablemousewheel: false
+            });
+            break;
+          case "grid":
+            $("#grid").jqxGrid({
+              touchmode: true,
+              keyboardnavigation: false,
+              enablemousewheel: false
+            });
+            break;
+          case "treeGrid":
+            $("#treeGrid").jqxTreeGrid({
+              touchmode: true,
+              enableHover: false
+            });
+            break;
+          case "dataTable":
+            $("#dataTable").jqxDataTable({
+              touchmode: true,
+              enableHover: false
+            });
+            break;
+          case "panel":
+            $("#panel").jqxPanel({
+              touchMode: true
+            });
+            break;
+          case "scheduler":
+            settings.touchMode = true;
+            $("#scheduler").jqxScheduler(settings);
+            break;
+          case "editor":
+            $("#editor").jqxEditor({
+              touchMode: true
+            });
+            break;
+        }
+      }
+
+    </script>
+    <script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxcore.js:14:93500"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxscrollbar.js:7:6910"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxscrollbar.js:7:5731"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxscrollbar.js:7:5048"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxcore.js:14:61079"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxcore.js:14:60188"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxcore.js:14:62077"></script>
+	<script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxcore.js:14:67556"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js.:2:2931"></script>
+    <script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxdata.js"></script>
+    <script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxbuttons.js"></script>
+    <script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxlistbox.js"></script>
+    <script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxcheckbox.js"></script>
+    <script src="https://www.jqwidgets.com/jquery-widgets-documentation/jqwidgets/jqxdropdownlist.js"></script>
+
+
+    <script>
+      $(document).ready(function() {
+        var theme = prepareSimulator("dropdownlist");
+        var data = new Array();
+
+        var Names = ["Pappa Henny - Mgr", "Miguel Maldonado - Mgr", "Josh 'Ninja' Nemerow - Mgr", "Albert - Mgr", "Zo - Wrkr", "Jennifer - Wrkr",
+          "D-Stix Door - Wrkr", "Sammie - Wrkr", "Destiny - Wrkr", "Valerie VIP - Wrkr", "Mike door - Wrkr", "Juan / bar - Wrkr", "Bell - Wrkr",
+          "Amy Tamez -Wrkr", "Samie Glover III -Wrkr", "Mario bar staff - Wrkr", "Imari - Wrkr", "Lyssette Maldonado - Wrkr", "Kamal - Wrrkr",
+          "Mirm - Wrkr", "Bambi - Ent", "Sonya - Ent", "Genesis - Ent", "Aisha - Ent", "Santana - Ent", "Ginger - Ent", "Lilliana - Ent", "Lynn - Ent",
+          "Yudisleydi - Ent", "Jasmine - Ent", "Danica - Ent", "Skylar - Ent", "Chiara - Ent", "Serenity - Ent", "Esmi - Ent", "Natasha - Ent", "Rose - Ent",
+          "Adriana - Ent", "Francesca - Ent", "Lola - Ent", "Karla - Ent", "Mona - Ent", "Gigi - Ent", "Summer - Ent", "Caiti - Ent", "Jasmine - Ent",
+          "Ashley - Ent", "Merary - Ent", "Jenavisia - Ent", "Liela - Ent", "Roxy - Ent", "Audrey - Ent", "Brittney - Ent", "Diamond - Ent", "Fatima - Ent",
+          "Selena - Ent", "Stormy - Ent", "Frida - Ent", "Viola - Ent", "London - Ent", "Rihanna - Ent", "Luscious - Ent", "Aaliyah - Ent", "Jackie - Ent",
+          "Kiki - Ent", "Stella - Ent", "Genesis - Ent", "Dawn - Ent", "Khloe - Ent", "Shay - Ent", "Malia - Ent", "Katana - Ent", "Mercy - Ent", "Sasha - Ent",
+          "Susana - Ent", "Jemma - Ent", "Tiara - Ent", "Ellie - Ent", "Pleasure - Ent", "Kimmy - Ent", "Nikky - Ent", "Nadhia - Ent", "Isabel - Ent",
+          "Bunny - Ent", "Asia - Ent", "Vee - Ent", "dream - Ent", "Bella - Ent", "kitty - Ent", "Vixen - Ent", "Catalina - Ent", "Katt - Ent", "Charlie - Ent",
+          "Lotus - Ent", "Sky - Ent", "Chelsea - Ent", "Sterling - Ent", "Adrianna - Ent", "Silver - Ent", "Valerie - Ent", "Amina - Ent", "Tanya - Ent",
+          "Nova - Ent", "Ruby - Ent", "Tanya - Ent", "Bianca - Ent", "Platinum - Ent", "Tori - Ent", "Jay - Ent", "Natalia - Ent", "Juliette - Ent", "Michelle - Ent",
+          "Nevaeh - Ent", "Samantha - Ent", "Monica - Ent", "Nola - Ent", "Lesliee - Ent", "Honey - Ent", "Diana - Ent", "Prada - Ent", "Sara - Ent",
+          "Lexxxi - Ent", "Bianca - Ent", "Blake - Ent", "Stephanie - Ent", "Roxanne - Ent", "Jade - Ent", "Sammy - Ent", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+          "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+        ];
+        var lastNames = [];
+
+
+        var k = 0;
+        for (var i = 0; i < 300; i++) {
+          var row = {};
+          row["names"] = Names[k];
+
+
+          data[i] = row;
+          k++;
+        }
+
+        var source = {
+          localdata: data,
+          datatype: "array"
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        $('#dropdownlist').jqxDropDownList({
+          selectedIndex: 0,
+          checkboxes: true,
+          theme: theme,
+          autoDropDownHeight: true,
+          source: dataAdapter,
+          displayMember: "names",
+          valueMember: "notes",
+          itemHeight: 70,
+          height: 40,
+          width: '90%',
+          renderer: function(index, label, value) {
+            var datarecord = data[index];
+            var imgurl = '../../images/' + label.toLowerCase() + '.png';
+            var img = '<img height="50" src="' + imgurl + '"/>';
+            var table = '<table><tr><td style="width: 55px;" rowspan="2">';
+            table += '</td><td>' + datarecord.names + " " + '</td></tr><tr><td>';
+            table += '</td></tr></table>';
+            return table;
+          }
+        });
+        initSimulator("dropdownlist");
+      });
+
+    </script>
+
+
+  </head>
+
+  <body class='default'>
+    <FORM method="POST" ACTION="action_form_new1.html" id="names">
+      <div id="demoContainer" class="device-mobile">
+        <div id="container" class="device-mobile-container">
+          <h3 style="margin-left: 5%; margin-top: 20px;">Select employees:</h3>
+          <div style="margin-left: 5%;" id="dropdownlist"></div>
+        </div>
+      </div>
+
+
+      <input type="button" name=submit id="btnSelected" value="Get Selected" />
+    </FORM>
+	<style>body,html{color:#333 !important}</style>
+  </body>
+
+</html>
